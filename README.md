@@ -1,10 +1,7 @@
-## Open Source Ethereum Mining Pool
+## Open Source Ethereum Classic Mining Pool
 
 ![Miner's stats page](https://15254b2dcaab7f5478ab-24461f391e20b7336331d5789078af53.ssl.cf1.rackcdn.com/ethereum.vanillaforums.com/editor/pe/cf77cki0pjpt.png)
 
-[![Join the chat at https://gitter.im/sammy007/open-ethereum-pool](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/sammy007/open-ethereum-pool?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) [![Build Status](https://travis-ci.org/sammy007/open-ethereum-pool.svg?branch=develop)](https://travis-ci.org/sammy007/open-ethereum-pool) [![Go Report Card](https://goreportcard.com/badge/github.com/sammy007/open-ethereum-pool)](https://goreportcard.com/report/github.com/sammy007/open-ethereum-pool)
-
-[List Of Open Ethereum Pools](https://github.com/sammy007/open-ethereum-pool/wiki/List-Of-Open-Pools)
 
 ### Features
 
@@ -38,8 +35,8 @@ First install  [go-ethereum](https://github.com/ethereum/go-ethereum/wiki/Instal
 
 Clone & compile:
 
-    git clone https://github.com/sammy007/open-ethereum-pool.git
-    cd open-ethereum-pool
+    git clone https://github.com/LeChuckDE/open-ethereumclassic-pool.git
+    cd open-ethereumclassic-pool
     make
 
 Install redis-server.
@@ -106,7 +103,7 @@ otherwise you will get errors on start because of JSON comments.**
   // Set to the number of CPU cores of your server
   "threads": 2,
   // Prefix for keys in redis store
-  "coin": "eth",
+  "coin": "etc",
   // Give unique name to each instance
   "name": "main",
 
@@ -309,13 +306,9 @@ I recommend this deployment strategy:
 This pool is tested to work with [Ethcore's Parity](https://github.com/ethcore/parity). Mining and block unlocking works, but I am not sure about payouts and suggest to run *official* geth node for payments.
 
 ### Credits
-
+Ported by LeChuckDE, Licensed under GPLv3.
 Made by sammy007. Licensed under GPLv3.
 
 #### Contributors
 
 [Alex Leverington](https://github.com/subtly)
-
-### Donations
-
-Coming Soon: ethereum contract and p2sh script. Please contact subtly on gitter if you would like to donate.
