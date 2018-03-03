@@ -7,7 +7,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereumproject/go-ethereum/common"
 	"gopkg.in/redis.v3"
 
 	"github.com/LeChuckDE/open-ethereumclassic-pool/util"

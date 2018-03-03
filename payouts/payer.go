@@ -8,7 +8,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereumproject/go-ethereum/common"
 
 	"github.com/LeChuckDE/open-ethereumclassic-pool/rpc"
 	"github.com/LeChuckDE/open-ethereumclassic-pool/storage"
@@ -31,13 +31,15 @@ type PayoutsConfig struct {
 }
 
 func (self PayoutsConfig) GasHex() string {
-	x := common.String2Big(self.Gas)
-	return common.BigToHash(x).Hex()
+	gas, _ := new(big.Int).SetString(self.Gas, 10)
+
+	return common.BigToHash(gas).Hex()
 }
 
 func (self PayoutsConfig) GasPriceHex() string {
-	x := common.String2Big(self.GasPrice)
-	return common.BigToHash(x).Hex()
+	gasPrice, _ := new(big.Int).SetString(self.GasPrice, 10)
+
+	return common.BigToHash(gasPrice).Hex()
 }
 
 type PayoutsProcessor struct {

@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereumproject/go-ethereum/common"
 
 	"github.com/LeChuckDE/open-ethereumclassic-pool/rpc"
 	"github.com/LeChuckDE/open-ethereumclassic-pool/util"

@@ -68,17 +68,13 @@ Configure nginx to serve <code>www/dist</code> as static website.
 
 #### Serving API using nginx
 
-Create an upstream for API:
+Add this setting after <code>location /</code>:
 
-    upstream api {
-        server 127.0.0.1:8080;
-    }
-
-and add this setting after <code>location /</code>:
-
-    location /api {
-        proxy_pass http://api;
-    }
+	location /api {
+		if ($request_uri ~* "/api/(.*)") {
+			proxy_pass  http://127.0.0.1:8080/apietc/$1;
+		}
+	}
 
 #### Customization
 

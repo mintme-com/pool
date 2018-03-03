@@ -12,7 +12,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereumproject/go-ethereum/common"
 
 	"github.com/LeChuckDE/open-ethereumclassic-pool/util"
 )
@@ -165,7 +165,13 @@ func (r *RPCClient) GetBalance(address string) (*big.Int, error) {
 	if err != nil {
 		return nil, err
 	}
-	return common.String2Big(reply), err
+
+	balance, ok := new(big.Int).SetString(reply, 10)
+	if !ok {
+		return nil, errors.New(fmt.Sprintf("malformed balance: %d", reply));
+	}
+
+	return balance, err
 }
 
 func (r *RPCClient) Sign(from string, s string) (string, error) {
