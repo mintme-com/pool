@@ -6,7 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereumproject/go-ethereum/common"
 )
 
 var pow256 = common.BigPow(2, 256)
@@ -36,7 +36,7 @@ func GetTargetHex(diff int64) string {
 
 func TargetHexToDiff(targetHex string) *big.Int {
 	targetBytes := common.FromHex(targetHex)
-	return new(big.Int).Div(pow256, common.BytesToBig(targetBytes))
+	return new(big.Int).Div(pow256, new(big.Int).SetBytes(targetBytes))
 }
 
 func ToHex(n int64) string {

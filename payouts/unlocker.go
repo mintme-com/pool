@@ -8,11 +8,12 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereumproject/go-ethereum/common"
 
 	"github.com/LeChuckDE/open-ethereumclassic-pool/rpc"
 	"github.com/LeChuckDE/open-ethereumclassic-pool/storage"
 	"github.com/LeChuckDE/open-ethereumclassic-pool/util"
+	"errors"
 )
 
 type UnlockerConfig struct {
@@ -29,7 +30,7 @@ type UnlockerConfig struct {
 
 const minDepth = 16
 
-var constReward = common.Big("5000000000000000000")
+var constReward, _ = new(big.Int).SetString("5000000000000000000", 10)
 var uncleReward = new(big.Int).Div(constReward, new(big.Int).SetInt64(32))
 
 
@@ -511,8 +512,16 @@ func (u *BlockUnlocker) getExtraRewardForTx(block *rpc.GetBlockReply) (*big.Int,
 			return nil, err
 		}
 		if receipt != nil {
-			gasUsed := common.String2Big(receipt.GasUsed)
-			gasPrice := common.String2Big(tx.GasPrice)
+			gasUsed, ok := new(big.Int).SetString(receipt.GasUsed, 10)
+			if !ok {
+				return nil, errors.New(fmt.Sprintf("malformed used gas: %s", receipt.GasUsed));
+			}
+
+			gasPrice, ok := new(big.Int).SetString(tx.GasPrice, 10)
+			if !ok {
+				return nil, errors.New(fmt.Sprintf("malformed transaction gas price: %s", tx.GasPrice));
+			}
+
 			fee := new(big.Int).Mul(gasUsed, gasPrice)
 			amount.Add(amount, fee)
 		}
