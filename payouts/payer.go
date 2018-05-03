@@ -8,11 +8,11 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ethereumproject/go-ethereum/common"
+	"github.com/webchain-network/webchaind/common"
 
-	"github.com/LeChuckDE/open-ethereumclassic-pool/rpc"
-	"github.com/LeChuckDE/open-ethereumclassic-pool/storage"
-	"github.com/LeChuckDE/open-ethereumclassic-pool/util"
+	"github.com/webchain-network/webchain-pool/rpc"
+	"github.com/webchain-network/webchain-pool/storage"
+	"github.com/webchain-network/webchain-pool/util"
 )
 
 type PayoutsConfig struct {
@@ -222,7 +222,7 @@ func (u *PayoutsProcessor) process() {
 }
 
 func (self PayoutsProcessor) isUnlockedAccount() bool {
-	_, err := self.rpc.Sign(self.config.Address, "0x0")
+	_, err := self.rpc.Sign(self.config.Address, "0x00")
 	if err != nil {
 		log.Println("Unable to process payouts:", err)
 		return false

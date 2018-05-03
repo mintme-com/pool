@@ -13,10 +13,10 @@ import (
 
 	"github.com/gorilla/mux"
 
-	"github.com/LeChuckDE/open-ethereumclassic-pool/policy"
-	"github.com/LeChuckDE/open-ethereumclassic-pool/rpc"
-	"github.com/LeChuckDE/open-ethereumclassic-pool/storage"
-	"github.com/LeChuckDE/open-ethereumclassic-pool/util"
+	"github.com/webchain-network/webchain-pool/policy"
+	"github.com/webchain-network/webchain-pool/rpc"
+	"github.com/webchain-network/webchain-pool/storage"
+	"github.com/webchain-network/webchain-pool/util"
 )
 
 type ProxyServer struct {
@@ -44,6 +44,7 @@ type Session struct {
 	sync.Mutex
 	conn  *net.TCPConn
 	login string
+	hashNoNonce string
 }
 
 func NewProxy(cfg *Config, backend *storage.RedisClient) *ProxyServer {

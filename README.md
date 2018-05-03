@@ -35,7 +35,7 @@ First install  [go-ethereum](https://github.com/ethereum/go-ethereum/wiki/Instal
 
 Clone & compile:
 
-    git clone https://github.com/LeChuckDE/open-ethereumclassic-pool.git
+    git clone https://github.com/webchain-network/webchain-pool.git
     cd open-ethereumclassic-pool
     make
 

@@ -2,6 +2,8 @@ package proxy
 
 import (
 	"bufio"
+	"encoding/binary"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"io"
@@ -9,7 +11,8 @@ import (
 	"net"
 	"time"
 
-	"github.com/LeChuckDE/open-ethereumclassic-pool/util"
+	"strconv"
+	"github.com/webchain-network/webchain-pool/util"
 )
 
 const (
@@ -100,11 +103,23 @@ func (s *ProxyServer) handleTCPClient(cs *Session) error {
 	return nil
 }
 
+func (cs *Session) getJob(hash, blob, target string) map[string]string {
+	cs.hashNoNonce = hash
+
+	targetReversed, _ := strconv.ParseUint(target[2:], 16, 64)
+	targetBytes := make([]byte, 8)
+	binary.LittleEndian.PutUint64(targetBytes[0:], targetReversed)
+
+	return map[string]string{ "blob": blob,
+	                          "job_id": cs.hashNoNonce[2:34],
+	                          "target": hex.EncodeToString(targetBytes) }
+}
+
 func (cs *Session) handleTCPMessage(s *ProxyServer, req *StratumReq) error {
 	// Handle RPC methods
 	switch req.Method {
-	case "eth_submitLogin":
-		var params []string
+	case "login":
+		var params map[string]string
 		err := json.Unmarshal(*req.Params, &params)
 		if err != nil {
 			log.Println("Malformed stratum request params from", cs.ip)
@@ -114,26 +129,42 @@ func (cs *Session) handleTCPMessage(s *ProxyServer, req *StratumReq) error {
 		if errReply != nil {
 			return cs.sendTCPError(req.Id, errReply)
 		}
+		if reply {
+			work, _ := s.handleGetWorkRPC(cs)
+			result := &JobRPC{ Id: "0",
+	                           Job: cs.getJob(work[0], work[1], work[2]),
+	                           Status: "OK" }
+			return cs.sendTCPResult(req.Id, result)
+        }
+
 		return cs.sendTCPResult(req.Id, reply)
-	case "eth_getWork":
-		reply, errReply := s.handleGetWorkRPC(cs)
+	case "getjob":
+		work, errReply := s.handleGetWorkRPC(cs)
 		if errReply != nil {
 			return cs.sendTCPError(req.Id, errReply)
 		}
-		return cs.sendTCPResult(req.Id, &reply)
-	case "eth_submitWork":
-		var params []string
+		result := &JobRPC{ Id: "0",
+	                       Job: cs.getJob(work[0], work[1], work[2]),
+	                       Status: "OK" }
+		return cs.sendTCPResult(req.Id, result)
+   case "submit":
+       var params map[string]string
 		err := json.Unmarshal(*req.Params, &params)
 		if err != nil {
 			log.Println("Malformed stratum request params from", cs.ip)
 			return err
 		}
-		reply, errReply := s.handleTCPSubmitRPC(cs, req.Worker, params)
+        prm := []string{ "0x" + params["nonce"], cs.hashNoNonce, "0x" + params["result"] /*mixdigest*/ }
+        reply, errReply := s.handleTCPSubmitRPC(cs, req.Worker, prm)
 		if errReply != nil {
 			return cs.sendTCPError(req.Id, errReply)
 		}
+		if reply {
+		   result := &JobRPC{ Status: "OK" }
+		   return cs.sendTCPResult(req.Id, result)
+		}
 		return cs.sendTCPResult(req.Id, &reply)
-	case "eth_submitHashrate":
+	case "keepalived":
 		return cs.sendTCPResult(req.Id, true)
 	default:
 		errReply := s.handleUnknownRPC(cs, req.Method)
@@ -149,11 +180,13 @@ func (cs *Session) sendTCPResult(id *json.RawMessage, result interface{}) error 
 	return cs.enc.Encode(&message)
 }
 
-func (cs *Session) pushNewJob(result interface{}) error {
+func (cs *Session) pushNewJob(work *[]string) error {
 	cs.Lock()
 	defer cs.Unlock()
-	// FIXME: Temporarily add ID for Claymore compliance
-	message := JSONPushMessage{Version: "2.0", Result: result, Id: 0}
+
+	message := JSONPushMessage{ Version: "2.0",
+	                            Method: "job",
+	                            Params: cs.getJob((*work)[0], (*work)[1], (*work)[2]) }
 	return cs.enc.Encode(&message)
 }
 

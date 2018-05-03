@@ -10,23 +10,23 @@ fi
 # Create fake Go workspace if it doesn't exist yet.
 workspace="$PWD/build/_workspace"
 root="$PWD"
-ethdir="$workspace/src/github.com/LeChuckDE"
-if [ ! -L "$ethdir/open-ethereumclassic-pool" ]; then
+ethdir="$workspace/src/github.com/webchain-network"
+if [ ! -L "$ethdir/webchain-pool" ]; then
     mkdir -p "$ethdir"
     cd "$ethdir"
-    ln -s ../../../../../. open-ethereumclassic-pool
+    ln -s ../../../../../. webchain-pool
     cd "$root"
 fi
 
 # Set up the environment to use the workspace.
 # Also add Godeps workspace so we build using canned dependencies.
-GOPATH="$workspace"
+GOPATH="$workspace:$GOPATH"
 GOBIN="$PWD/build/bin"
 export GOPATH GOBIN
 
 # Run the command inside the workspace.
-cd "$ethdir/open-ethereumclassic-pool"
-PWD="$ethdir/open-ethereumclassic-pool"
+cd "$ethdir/webchain-pool"
+PWD="$ethdir/webchain-pool"
 
 # Launch the arguments with the configured environment.
 exec "$@"

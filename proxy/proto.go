@@ -13,12 +13,17 @@ type StratumReq struct {
 	Worker string `json:"worker"`
 }
 
+type JobRPC struct {
+	Id string             `json:"id"`
+	Job map[string]string `json:"job"`
+	Status string         `json:"status"`
+}
+
 // Stratum
 type JSONPushMessage struct {
-	// FIXME: Temporarily add ID for Claymore compliance
-	Id      int64       `json:"id"`
 	Version string      `json:"jsonrpc"`
-	Result  interface{} `json:"result"`
+	Method  interface{} `json:"method"`
+	Params  interface{} `json:"params"`
 }
 
 type JSONRpcResp struct {

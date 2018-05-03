@@ -6,9 +6,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/ethereumproject/go-ethereum/common"
+	"github.com/webchain-network/webchaind/common"
 )
 
+var pow64 = common.BigPow(2, 64)
 var pow256 = common.BigPow(2, 256)
 var addressPattern = regexp.MustCompile("^0x[0-9a-fA-F]{40}$")
 var zeroHash = regexp.MustCompile("^0?x?0+$")
@@ -30,7 +31,7 @@ func MakeTimestamp() int64 {
 
 func GetTargetHex(diff int64) string {
 	difficulty := big.NewInt(diff)
-	diff1 := new(big.Int).Div(pow256, difficulty)
+	diff1 := new(big.Int).Div(pow64, difficulty)
 	return string(common.ToHex(diff1.Bytes()))
 }
 

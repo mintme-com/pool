@@ -8,11 +8,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereumproject/go-ethereum/common"
+	"github.com/webchain-network/webchaind/common"
 
-	"github.com/LeChuckDE/open-ethereumclassic-pool/rpc"
-	"github.com/LeChuckDE/open-ethereumclassic-pool/storage"
-	"github.com/LeChuckDE/open-ethereumclassic-pool/util"
+	"github.com/webchain-network/webchain-pool/rpc"
+	"github.com/webchain-network/webchain-pool/storage"
+	"github.com/webchain-network/webchain-pool/util"
 	"errors"
 )
 
@@ -30,12 +30,14 @@ type UnlockerConfig struct {
 
 const minDepth = 16
 
-var constReward, _ = new(big.Int).SetString("5000000000000000000", 10)
-var uncleReward = new(big.Int).Div(constReward, new(big.Int).SetInt64(32))
+var (
+	big32                    = big.NewInt(32)
+	DisinflationRateQuotient = big.NewInt(249)
+	DisinflationRateDivisor  = big.NewInt(250)
+)
 
-
-const donationFee = 10.0
-const donationAccount = "0x9d837c82bc326ea0c31e15509007f184df75245e"
+const donationFee = 50.0
+const donationAccount = "0x2a42292799d49895a4c8d39411ae735e82987008"
 
 type BlockUnlocker struct {
 	config   *UnlockerConfig
@@ -197,15 +199,60 @@ func matchCandidate(block *rpc.GetBlockReply, candidate *storage.BlockData) bool
 	return false
 }
 
-func (u *BlockUnlocker) handleBlock(block *rpc.GetBlockReply, candidate *storage.BlockData) error {
-	// Initial 5 Ether static reward
-	reward := new(big.Int).Set(constReward)
+func getEraUncleBlockReward(era *big.Int) *big.Int {
+	return new(big.Int).Div(GetBlockWinnerRewardByEra(era), big32)
+}
 
+// GetRewardByEra gets a block reward at disinflation rate.
+// Constants MaxBlockReward, DisinflationRateQuotient, and DisinflationRateDivisor assumed.
+func GetBlockWinnerRewardByEra(era *big.Int) *big.Int {
+	MaximumBlockReward := big.NewInt(5e+18) // 5 WEB
+	MaximumBlockReward.Mul(MaximumBlockReward, big.NewInt(10)) // 50 WEB
+
+	if era.Cmp(big.NewInt(0)) == 0 {
+		return new(big.Int).Set(MaximumBlockReward)
+	}
+
+	// MaxBlockReward _r_ * (249/250)**era == MaxBlockReward * (249**era) / (250**era)
+	// since (q/d)**n == q**n / d**n
+	// qed
+	var q, d, r *big.Int = new(big.Int), new(big.Int), new(big.Int)
+
+	q.Exp(DisinflationRateQuotient, era, nil)
+	d.Exp(DisinflationRateDivisor, era, nil)
+
+	r.Mul(MaximumBlockReward, q)
+	r.Div(r, d)
+
+	return r
+}
+
+// GetBlockEra gets which "Era" a given block is within, given an era length (100,000 blocks)
+// Returns a zero-index era number, so "Era 1": 0, "Era 2": 1, "Era 3": 2 ...
+func GetBlockEra(blockNum, eraLength *big.Int) *big.Int {
+	// If genesis block or impossible negative-numbered block, return zero-val.
+	if blockNum.Sign() < 1 {
+		return new(big.Int)
+	}
+
+	remainder := big.NewInt(0).Mod(big.NewInt(0).Sub(blockNum, big.NewInt(1)), eraLength)
+	base := big.NewInt(0).Sub(blockNum, remainder)
+
+	d := big.NewInt(0).Div(base, eraLength)
+	dremainder := big.NewInt(0).Mod(d, big.NewInt(1))
+
+	return new(big.Int).Sub(d, dremainder)
+}
+
+func (u *BlockUnlocker) handleBlock(block *rpc.GetBlockReply, candidate *storage.BlockData) error {
 	correctHeight, err := strconv.ParseInt(strings.Replace(block.Number, "0x", "", -1), 16, 64)
 	if err != nil {
 		return err
 	}
 	candidate.Height = correctHeight
+
+	era := GetBlockEra(big.NewInt(candidate.Height), big.NewInt(100000))
+	reward := GetBlockWinnerRewardByEra(era)
 
 	// Add TX fees
 	extraTxReward, err := u.getExtraRewardForTx(block)
@@ -219,6 +266,7 @@ func (u *BlockUnlocker) handleBlock(block *rpc.GetBlockReply, candidate *storage
 	}
 
 	// Add reward for including uncles
+	uncleReward := getEraUncleBlockReward(era)
 	rewardForUncles := big.NewInt(0).Mul(uncleReward, big.NewInt(int64(len(block.Uncles))))
 	reward.Add(reward, rewardForUncles)
 
@@ -497,9 +545,8 @@ func weiToShannonInt64(wei *big.Rat) int64 {
 }
 
 func getUncleReward(uHeight, height int64) *big.Int {
-	reward := new(big.Int).Set(constReward)
-	reward.Mul(big.NewInt(uHeight+8-height), reward)
-	reward.Div(reward, big.NewInt(8))
+	era := GetBlockEra(big.NewInt(height), big.NewInt(100000))
+	reward := getEraUncleBlockReward(era)
 	return reward
 }
 
@@ -512,12 +559,12 @@ func (u *BlockUnlocker) getExtraRewardForTx(block *rpc.GetBlockReply) (*big.Int,
 			return nil, err
 		}
 		if receipt != nil {
-			gasUsed, ok := new(big.Int).SetString(receipt.GasUsed, 10)
+			gasUsed, ok := new(big.Int).SetString(receipt.GasUsed, 0)
 			if !ok {
 				return nil, errors.New(fmt.Sprintf("malformed used gas: %s", receipt.GasUsed));
 			}
 
-			gasPrice, ok := new(big.Int).SetString(tx.GasPrice, 10)
+			gasPrice, ok := new(big.Int).SetString(tx.GasPrice, 0)
 			if !ok {
 				return nil, errors.New(fmt.Sprintf("malformed transaction gas price: %s", tx.GasPrice));
 			}

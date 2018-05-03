@@ -7,10 +7,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/ethereumproject/go-ethereum/common"
+	"github.com/webchain-network/webchaind/common"
 	"gopkg.in/redis.v3"
 
-	"github.com/LeChuckDE/open-ethereumclassic-pool/util"
+	"github.com/webchain-network/webchain-pool/util"
 )
 
 type Config struct {

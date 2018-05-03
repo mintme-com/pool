@@ -2,7 +2,6 @@ package rpc
 
 import (
 	"bytes"
-	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,9 +11,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/ethereumproject/go-ethereum/common"
-
-	"github.com/LeChuckDE/open-ethereumclassic-pool/util"
+	"github.com/webchain-network/webchain-pool/util"
 )
 
 type RPCClient struct {
@@ -146,7 +143,7 @@ func (r *RPCClient) GetTxReceipt(hash string) (*TxReceipt, error) {
 }
 
 func (r *RPCClient) SubmitBlock(params []string) (bool, error) {
-	rpcResp, err := r.doPost(r.Url, "eth_submitWork", params)
+	rpcResp, err := r.doPost(r.Url, "eth_submitWork", params[:2])
 	if err != nil {
 		return false, err
 	}
@@ -166,7 +163,7 @@ func (r *RPCClient) GetBalance(address string) (*big.Int, error) {
 		return nil, err
 	}
 
-	balance, ok := new(big.Int).SetString(reply, 10)
+	balance, ok := new(big.Int).SetString(reply, 0)
 	if !ok {
 		return nil, errors.New(fmt.Sprintf("malformed balance: %d", reply));
 	}
@@ -175,8 +172,7 @@ func (r *RPCClient) GetBalance(address string) (*big.Int, error) {
 }
 
 func (r *RPCClient) Sign(from string, s string) (string, error) {
-	hash := sha256.Sum256([]byte(s))
-	rpcResp, err := r.doPost(r.Url, "eth_sign", []string{from, common.ToHex(hash[:])})
+	rpcResp, err := r.doPost(r.Url, "eth_sign", []string{from, s})
 	var reply string
 	if err != nil {
 		return reply, err

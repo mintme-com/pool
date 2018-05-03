@@ -7,10 +7,10 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/ethereumproject/go-ethereum/common"
+	"github.com/webchain-network/webchaind/common"
 
-	"github.com/LeChuckDE/open-ethereumclassic-pool/rpc"
-	"github.com/LeChuckDE/open-ethereumclassic-pool/util"
+	"github.com/webchain-network/webchain-pool/rpc"
+	"github.com/webchain-network/webchain-pool/util"
 )
 
 const maxBacklog = 3
@@ -23,7 +23,7 @@ type heightDiffPair struct {
 type BlockTemplate struct {
 	sync.RWMutex
 	Header               string
-	Seed                 string
+	Seed                 string // TODO
 	Target               string
 	Difficulty           *big.Int
 	Height               uint64
@@ -36,14 +36,12 @@ type Block struct {
 	difficulty  *big.Int
 	hashNoNonce common.Hash
 	nonce       uint64
-	mixDigest   common.Hash
 	number      uint64
 }
 
 func (b Block) Difficulty() *big.Int     { return b.difficulty }
 func (b Block) HashNoNonce() common.Hash { return b.hashNoNonce }
 func (b Block) Nonce() uint64            { return b.nonce }
-func (b Block) MixDigest() common.Hash   { return b.mixDigest }
 func (b Block) NumberU64() uint64        { return b.number }
 
 func (s *ProxyServer) fetchBlockTemplate() {
