@@ -1,23 +1,13 @@
-## Open Source Ethereum Classic Mining Pool
-
-![Miner's stats page](https://15254b2dcaab7f5478ab-24461f391e20b7336331d5789078af53.ssl.cf1.rackcdn.com/ethereum.vanillaforums.com/editor/pe/cf77cki0pjpt.png)
-
+## Open Source Webchain Mining Pool
 
 ### Features
 
-**This pool is being further developed to provide an easy to use pool for Ethereum miners. This software is functional however an optimised release of the pool is expected soon. Testing and bug submissions are welcome!**
-
-* Support for HTTP and Stratum mining
+* Support for Stratum mining
 * Detailed block stats with luck percentage and full reward
-* Failover geth instances: geth high availability built in
+* Failover webchaind instances: webchaind high availability built in
 * Modern beautiful Ember.js frontend
 * Separate stats for workers: can highlight timed-out workers so miners can perform maintenance of rigs
 * JSON-API for stats
-
-#### Proxies
-
-* [Ether-Proxy](https://github.com/sammy007/ether-proxy) HTTP proxy with web interface
-* [Stratum Proxy](https://github.com/Atrides/eth-proxy) for Ethereum
 
 ### Building on Linux
 
@@ -31,19 +21,19 @@ Dependencies:
 
 **I highly recommend to use Ubuntu 16.04 LTS.**
 
-First install  [go-ethereum](https://github.com/ethereum/go-ethereum/wiki/Installation-Instructions-for-Ubuntu).
+First install  [webchaind](https://github.com/webchain-network/webchaind/releases).
 
 Clone & compile:
 
     git clone https://github.com/webchain-network/webchain-pool.git
-    cd open-ethereumclassic-pool
+    cd webchain-pool
     make
 
 Install redis-server.
 
 ### Running Pool
 
-    ./build/bin/open-ethereum-pool config.json
+    ./build/bin/webchain-pool config.json
 
 You can use Ubuntu upstart - check for sample config in <code>upstart.conf</code>.
 
@@ -99,7 +89,7 @@ otherwise you will get errors on start because of JSON comments.**
   // Set to the number of CPU cores of your server
   "threads": 2,
   // Prefix for keys in redis store
-  "coin": "etc",
+  "coin": "web",
   // Give unique name to each instance
   "name": "main",
 
@@ -132,7 +122,7 @@ otherwise you will get errors on start because of JSON comments.**
     "blockRefreshInterval": "120ms",
     "stateUpdateInterval": "3s",
     // Require this share difficulty from miners
-    "difficulty": 2000000000,
+    "difficulty": 1000,
 
     /* Reply error to miner instead of job if redis is unavailable.
       Should save electricity to miners if pool is sick and they didn't set up failovers.
@@ -212,12 +202,12 @@ otherwise you will get errors on start because of JSON comments.**
   "upstream": [
     {
       "name": "main",
-      "url": "http://127.0.0.1:8545",
+      "url": "http://127.0.0.1:39573",
       "timeout": "10s"
     },
     {
       "name": "backup",
-      "url": "http://127.0.0.2:8545",
+      "url": "http://127.0.0.2:39573",
       "timeout": "10s"
     }
   ],
@@ -260,7 +250,7 @@ otherwise you will get errors on start because of JSON comments.**
     // Run payouts in this interval
     "interval": "12h",
     // Geth instance node rpc endpoint for payouts processing
-    "daemon": "http://127.0.0.1:8545",
+    "daemon": "http://127.0.0.1:39573",
     // Rise error if can't reach geth in this amount of time
     "timeout": "10s",
     // Address with pool balance
@@ -295,12 +285,9 @@ I recommend this deployment strategy:
 * Don't run payouts and unlocker modules as part of mining node. Create separate configs for both, launch independently and make sure you have a single instance of each module running.
 * If `poolFeeAddress` is not specified all pool profit will remain on coinbase address. If it specified, make sure to periodically send some dust back required for payments.
 
-### Alternative Ethereum Implementations
-
-This pool is tested to work with [Ethcore's Parity](https://github.com/ethcore/parity). Mining and block unlocking works, but I am not sure about payouts and suggest to run *official* geth node for payments.
-
 ### Credits
-Ported by LeChuckDE, Licensed under GPLv3.
+Ported to Webchain by Webchain project. Licensed under GPLv3.
+Ported to Ethereum Classic by LeChuckDE, Licensed under GPLv3.
 Made by sammy007. Licensed under GPLv3.
 
 #### Contributors
