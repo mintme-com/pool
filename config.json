@@ -1,25 +1,25 @@
 {
 	"threads": 2,
-	"coin": "etc",
+	"coin": "web",
 	"name": "main",
 
 	"proxy": {
-		"enabled": false,
+		"enabled": true,
 		"listen": "0.0.0.0:8888",
 		"limitHeadersSize": 1024,
 		"limitBodySize": 256,
 		"behindReverseProxy": false,
 		"blockRefreshInterval": "120ms",
 		"stateUpdateInterval": "3s",
-		"difficulty": 2000000000,
+		"difficulty": 1000,
 		"hashrateExpiration": "3h",
 
 		"healthCheck": true,
 		"maxFails": 100,
 
 		"stratum": {
-			"enabled": false,
-			"listen": "0.0.0.0:8008",
+			"enabled": true,
+			"listen": "0.0.0.0:3333",
 			"timeout": "120s",
 			"maxConn": 8192
 		},
@@ -47,7 +47,7 @@
 	},
 
 	"api": {
-		"enabled": false,
+		"enabled": true,
 		"purgeOnly": false,
 		"purgeInterval": "10m",
 		"listen": "0.0.0.0:8080",
@@ -63,12 +63,7 @@
 	"upstream": [
 		{
 			"name": "main",
-			"url": "http://127.0.0.1:8545",
-			"timeout": "10s"
-		},
-		{
-			"name": "backup",
-			"url": "http://127.0.0.2:8545",
+			"url": "http://127.0.0.1:39573",
 			"timeout": "10s"
 		}
 	],
@@ -81,22 +76,23 @@
 	},
 
 	"unlocker": {
-		"enabled": false,
+		"enabled": true,
 		"poolFee": 1.0,
 		"poolFeeAddress": "",
-		"depth": 120,
-		"immatureDepth": 20,
+		"donate": true,
+		"depth": 32,
+		"immatureDepth": 16,
 		"keepTxFees": false,
-		"interval": "10m",
-		"daemon": "http://127.0.0.1:8545",
+		"interval": "1m",
+		"daemon": "http://127.0.0.1:39573",
 		"timeout": "10s"
 	},
 
 	"payouts": {
 		"enabled": true,
-		"requirePeers": 12,
+		"requirePeers": 2,
 		"interval": "120m",
-		"daemon": "http://127.0.0.1:8545",
+		"daemon": "http://127.0.0.1:39573",
 		"timeout": "10s",
 		"address": "0x0",
 		"gas": "21000",
