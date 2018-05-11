@@ -96,7 +96,7 @@
 		"timeout": "10s",
 		"address": "0x0",
 		"gas": "21000",
-		"gasPrice": "50000000000",
+		"gasPrice": "200000000000",
 		"autoGas": true,
 		"threshold": 5000000000,
 		"bgsave": false
