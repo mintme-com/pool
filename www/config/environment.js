@@ -19,18 +19,18 @@ module.exports = function(environment) {
 
       // HTTP mining endpoint
       HttpHost: 'http://example.net',
-      HttpPort: 8888,
+      HttpPort: 3333,
 
       // Stratum mining endpoint
       StratumHost: 'example.net',
-      StratumPort: 8008,
+      StratumPort: 3333,
 
       // Fee and payout details
       PoolFee: '1%',
-      PayoutThreshold: '0.5 Ether',
+      PayoutThreshold: '5 WEB',
 
       // For network hashrate (change for your favourite fork)
-      BlockTime: 14.4
+      BlockTime: 10.0
     }
   };
 
