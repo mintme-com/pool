@@ -13,7 +13,7 @@
 
 Dependencies:
 
-  * go >= 1.5
+  * go >= 1.8
   * geth
   * redis-server >= 2.8.0
   * nodejs
