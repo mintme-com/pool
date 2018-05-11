@@ -98,7 +98,7 @@
 		"gas": "21000",
 		"gasPrice": "50000000000",
 		"autoGas": true,
-		"threshold": 500000000,
+		"threshold": 5000000000,
 		"bgsave": false
 	},
 
