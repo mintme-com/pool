@@ -14,7 +14,7 @@
 Dependencies:
 
   * go >= 1.8
-  * geth
+  * webchaind
   * redis-server >= 2.8.0
   * nodejs
   * nginx
@@ -118,7 +118,7 @@ otherwise you will get errors on start because of JSON comments.**
       "maxConn": 8192
     },
 
-    // Try to get new job from geth in this interval
+    // Try to get new job from webchaind in this interval
     "blockRefreshInterval": "120ms",
     "stateUpdateInterval": "3s",
     // Require this share difficulty from miners
@@ -192,10 +192,10 @@ otherwise you will get errors on start because of JSON comments.**
     "purgeOnly": false
   },
 
-  // Check health of each geth node in this interval
+  // Check health of each webchaind node in this interval
   "upstreamCheckInterval": "5s",
 
-  /* List of geth nodes to poll for new jobs. Pool will try to get work from
+  /* List of webchaind nodes to poll for new jobs. Pool will try to get work from
     first alive one and check in background for failed to back up.
     Current block template of the pool is always cached in RAM indeed.
   */
@@ -236,9 +236,9 @@ otherwise you will get errors on start because of JSON comments.**
     "keepTxFees": false,
     // Run unlocker in this interval
     "interval": "10m",
-    // Geth instance node rpc endpoint for unlocking blocks
+    // webchaind instance node rpc endpoint for unlocking blocks
     "daemon": "http://127.0.0.1:8545",
-    // Rise error if can't reach geth in this amount of time
+    // Rise error if can't reach webchaind in this amount of time
     "timeout": "10s"
   },
 
@@ -249,13 +249,13 @@ otherwise you will get errors on start because of JSON comments.**
     "requirePeers": 25,
     // Run payouts in this interval
     "interval": "12h",
-    // Geth instance node rpc endpoint for payouts processing
+    // webchaind instance node rpc endpoint for payouts processing
     "daemon": "http://127.0.0.1:39573",
-    // Rise error if can't reach geth in this amount of time
+    // Rise error if can't reach webchaind in this amount of time
     "timeout": "10s",
     // Address with pool balance
     "address": "0x0",
-    // Let geth to determine gas and gasPrice
+    // Let webchaind to determine gas and gasPrice
     "autoGas": true,
     // Gas amount and price for payout tx (advanced users only)
     "gas": "21000",
