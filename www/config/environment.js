@@ -30,7 +30,7 @@ module.exports = function(environment) {
       PayoutThreshold: '5 WEB',
 
       // For network hashrate (change for your favourite fork)
-      BlockTime: 10.0
+      BlockTime: 12.0
     }
   };
 
