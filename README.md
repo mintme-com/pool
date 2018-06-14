@@ -283,7 +283,6 @@ I recommend this deployment strategy:
 * Also, keep in mind that **unlocking and payouts will halt in case of backend or node RPC errors**. In that case check everything and restart.
 * You must restart module if you see errors with the word *suspended*.
 * Don't run payouts and unlocker modules as part of mining node. Create separate configs for both, launch independently and make sure you have a single instance of each module running.
-* We didn't change mechanics of pool dev fee from original version, we just replaced wallet address since previous one would be incompatible with WEB.
 * If `poolFeeAddress` is not specified all pool profit will remain on coinbase address. If it specified, make sure to periodically send some dust back required for payments.
 
 ### Credits
