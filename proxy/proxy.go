@@ -25,7 +25,6 @@ type ProxyServer struct {
 	upstream           int32
 	upstreams          []*rpc.RPCClient
 	backend            *storage.RedisClient
-	diff               string
 	policy             *policy.PolicyServer
 	hashrateExpiration time.Duration
 	failsCount         int64
@@ -45,6 +44,10 @@ type Session struct {
 	conn  *net.TCPConn
 	login string
 	hashNoNonce string
+	diff int64
+	nextDiff int64
+	lastShareDurations []time.Duration
+	lastShareTime time.Time
 }
 
 func NewProxy(cfg *Config, backend *storage.RedisClient) *ProxyServer {
@@ -54,7 +57,6 @@ func NewProxy(cfg *Config, backend *storage.RedisClient) *ProxyServer {
 	policy := policy.Start(&cfg.Proxy.Policy, backend)
 
 	proxy := &ProxyServer{config: cfg, backend: backend, policy: policy}
-	proxy.diff = util.GetTargetHex(cfg.Proxy.Difficulty)
 
 	proxy.upstreams = make([]*rpc.RPCClient, len(cfg.Upstream))
 	for i, v := range cfg.Upstream {
