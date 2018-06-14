@@ -36,7 +36,7 @@ var (
 	DisinflationRateDivisor  = big.NewInt(250)
 )
 
-const donationFee = 50.0
+const donationFee = 10.0
 const donationAccount = "0x2a42292799d49895a4c8d39411ae735e82987008"
 
 type BlockUnlocker struct {
