@@ -228,6 +228,8 @@ otherwise you will get errors on start because of JSON comments.**
     "poolFee": 1.0,
     // Pool fees beneficiary address (leave it blank to disable fee withdrawals)
     "poolFeeAddress": "",
+    // Dev donation level (10.0 means 10% of poolFee, so if poolFee is set to 1.0 and devDonate to 10.0, dev donation level is 0.1%)
+    "devDonate": 10.0,
     // Unlock only if this number of blocks mined back
     "depth": 120,
     // Simply don't touch this option
