@@ -12,6 +12,23 @@ import (
 
 var hasher = cryptonight.New()
 
+var (
+	big0 = big.NewInt(0)
+	maxUint256  = new(big.Int).Exp(big.NewInt(2), big.NewInt(256), big.NewInt(0))
+)
+
+func (s *ProxyServer) checkHash(hash *big.Int, difficulty *big.Int) bool {
+	/* Cannot happen if block header diff is validated prior to PoW, but can
+		 happen if PoW is checked first due to parallel PoW checking.
+	*/
+	if difficulty.Cmp(big0) == 0 {
+		return false
+	}
+
+	target := new(big.Int).Div(maxUint256, difficulty)
+	return hash.Cmp(target) <= 0
+}
+
 func (s *ProxyServer) processShare(login, id, ip string, t *BlockTemplate, params []string, shareDiff int64) (bool, bool) {
 	nonceHex := params[0]
 	hashNoNonce := params[1]
@@ -25,11 +42,13 @@ func (s *ProxyServer) processShare(login, id, ip string, t *BlockTemplate, param
 
 	header, err := hex.DecodeString(t.Seed)
 
-	if err != nil || !hasher.VerifyBytes(header, big.NewInt(shareDiff), nonce) {
+	hash := hasher.CalcHash(header, nonce)
+
+	if err != nil || !s.checkHash(hash, big.NewInt(shareDiff)) {
 		return false, false
 	}
 
-	if hasher.VerifyBytes(header, h.diff, nonce) { // TODO: only one call of 'VerifyBytes'
+	if s.checkHash(hash, h.diff) {
 		ok, err := s.rpc().SubmitBlock(params)
 		if err != nil {
 			log.Printf("Block submission failure at height %v for %v: %v", h.height, t.Header, err)
