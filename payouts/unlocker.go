@@ -17,15 +17,16 @@ import (
 )
 
 type UnlockerConfig struct {
-	Enabled        bool    `json:"enabled"`
-	PoolFee        float64 `json:"poolFee"`
-	PoolFeeAddress string  `json:"poolFeeAddress"`
-	Depth          int64   `json:"depth"`
-	ImmatureDepth  int64   `json:"immatureDepth"`
-	KeepTxFees     bool    `json:"keepTxFees"`
-	Interval       string  `json:"interval"`
-	Daemon         string  `json:"daemon"`
-	Timeout        string  `json:"timeout"`
+	Enabled        bool     `json:"enabled"`
+	PoolFee        float64  `json:"poolFee"`
+	PoolFeeAddress string   `json:"poolFeeAddress"`
+	Depth          int64    `json:"depth"`
+	DevDonate      *float64 `json:"devDonate,omitempty"`
+	ImmatureDepth  int64    `json:"immatureDepth"`
+	KeepTxFees     bool     `json:"keepTxFees"`
+	Interval       string   `json:"interval"`
+	Daemon         string   `json:"daemon"`
+	Timeout        string   `json:"timeout"`
 }
 
 const minDepth = 16
@@ -509,10 +510,18 @@ func (u *BlockUnlocker) calculateRewards(block *storage.BlockData) (*big.Rat, *b
 	}
 
 	if u.config.Enabled {
-		var donation = new(big.Rat)
-		poolProfit, donation = chargeFee(poolProfit, donationFee)
-		login := strings.ToLower(donationAccount)
-		rewards[login] += weiToShannonInt64(donation)
+		devdonate := donationFee
+
+		if u.config.DevDonate != nil && *u.config.DevDonate >= 0.0 && *u.config.DevDonate < 100.0 {
+			devdonate = *u.config.DevDonate
+		}
+
+		if devdonate > 0.0 {
+			var donation = new(big.Rat)
+			poolProfit, donation = chargeFee(poolProfit, devdonate)
+			login := strings.ToLower(donationAccount)
+			rewards[login] += weiToShannonInt64(donation)
+		}
 	}
 
 	if len(u.config.PoolFeeAddress) != 0 {

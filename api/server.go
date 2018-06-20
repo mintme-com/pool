@@ -27,6 +27,7 @@ type ApiConfig struct {
 	Blocks               int64  `json:"blocks"`
 	PurgeOnly            bool   `json:"purgeOnly"`
 	PurgeInterval        string `json:"purgeInterval"`
+	ShowTotalHashes      bool   `json:"showTotalHashes"`
 }
 
 type ApiServer struct {
@@ -275,7 +276,7 @@ func (s *ApiServer) AccountIndex(w http.ResponseWriter, r *http.Request) {
 			log.Printf("Failed to fetch stats from backend: %v", err)
 			return
 		}
-		workers, err := s.backend.CollectWorkersStats(s.hashrateWindow, s.hashrateLargeWindow, login)
+		workers, err := s.backend.CollectWorkersStats(s.hashrateWindow, s.hashrateLargeWindow, login, s.config.ShowTotalHashes)
 		if err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			log.Printf("Failed to fetch stats from backend: %v", err)

@@ -77,6 +77,7 @@ type Miner struct {
 type Worker struct {
 	Miner
 	TotalHR int64 `json:"hr2"`
+	TotalHashes int64 `json:"th"`
 }
 
 func NewRedisClient(cfg *Config, prefix string) *RedisClient {
@@ -232,6 +233,7 @@ func (r *RedisClient) WriteBlock(login, id string, params []string, diff, roundD
 }
 
 func (r *RedisClient) writeShare(tx *redis.Multi, ms, ts int64, login, id string, diff int64, expire time.Duration) {
+	tx.HIncrBy(r.formatKey("shares", "total"), login + "." + id, diff)
 	tx.HIncrBy(r.formatKey("shares", "roundCurrent"), login, diff)
 	tx.ZAdd(r.formatKey("hashrate"), redis.Z{Score: float64(ts), Member: join(diff, login, id, ms)})
 	tx.ZAdd(r.formatKey("hashrate", login), redis.Z{Score: float64(ts), Member: join(diff, id, ms)})
@@ -701,7 +703,7 @@ func (r *RedisClient) CollectStats(smallWindow time.Duration, maxBlocks, maxPaym
 	return stats, nil
 }
 
-func (r *RedisClient) CollectWorkersStats(sWindow, lWindow time.Duration, login string) (map[string]interface{}, error) {
+func (r *RedisClient) CollectWorkersStats(sWindow, lWindow time.Duration, login string, showTotalHashes bool) (map[string]interface{}, error) {
 	smallWindow := int64(sWindow / time.Second)
 	largeWindow := int64(lWindow / time.Second)
 	stats := make(map[string]interface{})
@@ -754,6 +756,17 @@ func (r *RedisClient) CollectWorkersStats(sWindow, lWindow time.Duration, login 
 
 		currentHashrate += worker.HR
 		totalHashrate += worker.TotalHR
+
+		worker.TotalHashes = 0
+		if showTotalHashes {
+			cmds, err := tx.Exec(func() error {
+				tx.HGet(r.formatKey("shares", "total"), login + "." + id)
+				return nil
+			})
+			if err == nil || err == redis.Nil {
+				worker.TotalHashes, _ = cmds[0].(*redis.StringCmd).Int64()
+			}
+		}
 		workers[id] = worker
 	}
 	stats["workers"] = workers
