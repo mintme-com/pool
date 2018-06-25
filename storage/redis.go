@@ -218,7 +218,7 @@ func (r *RedisClient) WriteBlock(login, id string, params []string, diff, roundD
 	if err != nil {
 		return false, err
 	} else {
-		sharesMap, _ := cmds[10].(*redis.StringStringMapCmd).Result()
+		sharesMap, _ := cmds[len(cmds) - 1].(*redis.StringStringMapCmd).Result()
 		totalShares := int64(0)
 		for _, v := range sharesMap {
 			n, _ := strconv.ParseInt(v, 10, 64)
