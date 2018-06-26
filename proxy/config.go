@@ -45,6 +45,8 @@ type Proxy struct {
 	HealthCheck bool  `json:"healthCheck"`
 
 	Stratum Stratum `json:"stratum"`
+
+	VarDiff VarDiff `json:"varDiff"`
 }
 
 type Stratum struct {
@@ -52,6 +54,14 @@ type Stratum struct {
 	Listen  string `json:"listen"`
 	Timeout string `json:"timeout"`
 	MaxConn int    `json:"maxConn"`
+}
+
+type VarDiff struct {
+	MinDiff         int64   `json:"minDiff"`
+	MaxDiff         int64   `json:"maxDiff"`
+	TargetTime      float64 `json:"targetTime"`
+	VariancePercent int     `json:"variancePercent"`
+	MaxJump         int64   `json:"maxJump"`
 }
 
 type Upstream struct {

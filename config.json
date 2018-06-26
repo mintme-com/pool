@@ -24,6 +24,14 @@
 			"maxConn": 8192
 		},
 
+		"varDiff": {
+			"minDiff": 500,
+			"maxDiff": 100000,
+			"targetTime": 100,
+			"variancePercent": 30,
+			"maxJump": 50
+		},
+
 		"policy": {
 			"workers": 8,
 			"resetInterval": "60m",

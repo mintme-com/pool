@@ -2,8 +2,10 @@ package proxy
 
 import (
 	"log"
+	"math"
 	"regexp"
 	"strings"
+	"time"
 
 	"github.com/webchain-network/webchain-pool/rpc"
 	"github.com/webchain-network/webchain-pool/util"
@@ -12,7 +14,7 @@ import (
 // Allow only lowercase hexadecimal with 0x prefix
 var noncePattern = regexp.MustCompile("^0x[0-9a-f]{16}$")
 var hashPattern = regexp.MustCompile("^0x[0-9a-f]{64}$")
-var workerPattern = regexp.MustCompile("^[0-9a-zA-Z-_]{1,8}$")
+var workerPattern = regexp.MustCompile("^[0-9a-zA-Z-_]{1,64}$")
 
 // Stratum
 func (s *ProxyServer) handleLoginRPC(cs *Session, params map[string]string, id string) (bool, *ErrorReply) {
@@ -28,6 +30,8 @@ func (s *ProxyServer) handleLoginRPC(cs *Session, params map[string]string, id s
 		return false, &ErrorReply{Code: -1, Message: "You are blacklisted"}
 	}
 	cs.login = login
+	cs.diff = s.config.Proxy.Difficulty
+	cs.nextDiff = cs.diff
 	s.registerSession(cs)
 	log.Printf("Stratum miner connected %v@%v", login, cs.ip)
 	return true, nil
@@ -38,7 +42,8 @@ func (s *ProxyServer) handleGetWorkRPC(cs *Session) ([]string, *ErrorReply) {
 	if t == nil || len(t.Header) == 0 || s.isSick() {
 		return nil, &ErrorReply{Code: 0, Message: "Work not ready"}
 	}
-	return []string{t.Header, t.Seed, s.diff}, nil
+	cs.diff = cs.nextDiff
+	return []string{t.Header, t.Seed, util.GetTargetHex(cs.diff)}, nil
 }
 
 // Stratum
@@ -51,6 +56,58 @@ func (s *ProxyServer) handleTCPSubmitRPC(cs *Session, id string, params []string
 		return false, &ErrorReply{Code: 25, Message: "Not subscribed"}
 	}
 	return s.handleSubmitRPC(cs, cs.login, id, params)
+}
+
+func (s *ProxyServer) calcNewDiff(cs *Session) int64 {
+	config := &s.config.Proxy.VarDiff
+
+	now := time.Now()
+
+	if cs.lastShareTime.IsZero() {
+		cs.lastShareTime = now
+		return cs.diff
+	}
+
+	sinceLast := now.Sub(cs.lastShareTime)
+	cs.lastShareTime = now
+
+	cs.lastShareDurations = append(cs.lastShareDurations, sinceLast)
+
+	if len(cs.lastShareDurations) > 5 {
+		cs.lastShareDurations = cs.lastShareDurations[1:]
+	}
+
+	var avg float64
+	for i := 0; i<len(cs.lastShareDurations); i++ {
+		avg += cs.lastShareDurations[i].Seconds()
+	}
+	avg /= float64(len(cs.lastShareDurations))
+
+	variance := float64(config.VariancePercent) / 100.0 * config.TargetTime
+	tMin := config.TargetTime - variance
+	tMax := config.TargetTime + variance
+
+	var direction float64
+	var newDiff int64
+
+	if avg > tMax && cs.diff > config.MinDiff {
+		newDiff = int64(config.TargetTime / avg * float64(cs.diff))
+        newDiff = util.Max(newDiff, config.MinDiff)
+		direction = -1
+	} else if avg < tMin && cs.diff < config.MaxDiff {
+		newDiff = int64(config.TargetTime / avg * float64(cs.diff))
+		newDiff = util.Min(newDiff, config.MaxDiff)
+		direction = 1
+	} else {
+		return cs.diff
+	}
+
+	if math.Abs(float64(newDiff - cs.diff)) / float64(cs.diff) * 100 > float64(config.MaxJump) {
+		change := int64(float64(config.MaxJump) / 100 * float64(cs.diff) * direction);
+		newDiff = cs.diff + change;
+	}
+	cs.lastShareDurations = nil
+	return newDiff
 }
 
 func (s *ProxyServer) handleSubmitRPC(cs *Session, login, id string, params []string) (bool, *ErrorReply) {
@@ -69,7 +126,7 @@ func (s *ProxyServer) handleSubmitRPC(cs *Session, login, id string, params []st
 		return false, &ErrorReply{Code: -1, Message: "Malformed PoW result"}
 	}*/
 	t := s.currentBlockTemplate()
-	exist, validShare := s.processShare(login, id, cs.ip, t, params)
+	exist, validShare := s.processShare(login, id, cs.ip, t, params, cs.diff)
 	ok := s.policy.ApplySharePolicy(cs.ip, !exist && validShare)
 
 	if exist {
@@ -86,6 +143,8 @@ func (s *ProxyServer) handleSubmitRPC(cs *Session, login, id string, params []st
 		return false, nil
 	}
 	log.Printf("Valid share from %s@%s", login, cs.ip)
+
+	cs.nextDiff = s.calcNewDiff(cs)
 
 	if !ok {
 		return true, &ErrorReply{Code: -1, Message: "High rate of invalid shares"}
