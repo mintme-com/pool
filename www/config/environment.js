@@ -30,7 +30,10 @@ module.exports = function(environment) {
       PayoutThreshold: '5 WEB',
 
       // For network hashrate (change for your favourite fork)
-      BlockTime: 12.0
+      BlockTime: 12.0,
+
+      // For Google Analytics
+      AnalyticsCode: "UA-1111111-00"
     }
   };
 

@@ -113,6 +113,5 @@
 	"newrelicEnabled": false,
 	"newrelicName": "MyEtherProxy",
 	"newrelicKey": "SECRET_KEY",
-	"newrelicVerbose": false,
-	"analytics-code": "UA-1111111-00"
+	"newrelicVerbose": false
 }
