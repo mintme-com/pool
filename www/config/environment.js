@@ -30,14 +30,12 @@ module.exports = function(environment) {
       PayoutThreshold: '5 WEB',
 
       // For network hashrate (change for your favourite fork)
-      BlockTime: 12.0,
-
-      // For Google Analytics
-      AnalyticsCode: "UA-1111111-00"
+      BlockTime: 12.0
     }
   };
 
   if (environment === 'development') {
+
     /* Override ApiUrl just for development, while you are customizing
       frontend markup and css theme on your workstation.
     */
@@ -63,6 +61,10 @@ module.exports = function(environment) {
 
   if (environment === 'production') {
 
+      // For Google Analytics
+      ENV.googleAnalytics = {
+          webPropertyId: 'UA-XXXX-Y'
+      };
   }
 
   return ENV;
