@@ -496,9 +496,7 @@ func (r *RedisClient) WriteMaturedBlock(block *BlockData, roundRewards map[strin
 		total := int64(0)
 		for login, amount := range roundRewards {
 			total += amount
-			// NOTICE: Maybe expire round reward entry in 604800 (a week)?
 			tx.HIncrBy(r.formatKey("miners", login), "balance", amount)
-			tx.HSetNX(r.formatKey("credits", block.Height, block.Hash), login, strconv.FormatInt(amount, 10))
 		}
 		tx.Del(creditKey)
 		tx.HIncrBy(r.formatKey("finances"), "balance", total)
