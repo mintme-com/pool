@@ -10,7 +10,8 @@ import (
 	"github.com/webchain-network/cryptonight"
 )
 
-var hasher = cryptonight.New()
+var lyra2_block uint64 = 2022222
+var hasher = cryptonight.New(lyra2_block)
 
 var (
 	big0 = big.NewInt(0)
@@ -42,7 +43,12 @@ func (s *ProxyServer) processShare(login, id, ip string, t *BlockTemplate, param
 
 	header, err := hex.DecodeString(t.Seed)
 
-	hash := hasher.CalcHash(header, nonce)
+	var hash *big.Int
+	if t.Height >= lyra2_block {
+		hash = hasher.CalcHashLYRA2(header, nonce)
+	} else {
+		hash = hasher.CalcHash(header, nonce)
+	}
 
 	if err != nil || !s.checkHash(hash, big.NewInt(shareDiff)) {
 		return false, false
