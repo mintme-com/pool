@@ -10,7 +10,7 @@ import (
 	"github.com/webchain-network/cryptonight"
 )
 
-var lyra2_block uint64 = 9999999 // TODO
+var lyra2_block uint64 = 2022222
 var hasher = cryptonight.New(lyra2_block)
 
 var (
