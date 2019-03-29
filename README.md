@@ -1,5 +1,7 @@
 ## Open Source Webchain Mining Pool
 
+What follows next is the basic short guide. If you have a need to learn how to install in a more detailed way, we invite you to read our <b>[Guide on Wiki](https://github.com/webchain-network/webchain-pool/wiki/Detailed-guide-about-Webchain-pool-installation)</b>
+
 ### Features
 
 * Support for Stratum mining
