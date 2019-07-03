@@ -11,7 +11,8 @@ import (
 )
 
 var lyra2_block uint64 = 2022222
-var hasher = cryptonight.New(lyra2_block)
+var lyra2v2_block uint64 = 9999999 // TODO
+var hasher = cryptonight.New(lyra2_block, lyra2v2_block)
 
 var (
 	big0 = big.NewInt(0)
@@ -44,8 +45,10 @@ func (s *ProxyServer) processShare(login, id, ip string, t *BlockTemplate, param
 	header, err := hex.DecodeString(t.Seed)
 
 	var hash *big.Int
-	if t.Height >= lyra2_block {
-		hash = hasher.CalcHashLYRA2(header, nonce)
+	if t.Height >= lyra2v2_block {
+		hash = hasher.CalcHashLYRA2(header, nonce, 1)
+	} else if t.Height >= lyra2_block {
+		hash = hasher.CalcHashLYRA2(header, nonce, 4)
 	} else {
 		hash = hasher.CalcHash(header, nonce)
 	}
