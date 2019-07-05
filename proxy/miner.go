@@ -11,7 +11,7 @@ import (
 )
 
 var lyra2_block uint64 = 2022222
-var lyra2v2_block uint64 = 9999999 // TODO
+var lyra2v2_block uint64 = 2619000
 var hasher = cryptonight.New(lyra2_block, lyra2v2_block)
 
 var (
