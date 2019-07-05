@@ -245,6 +245,9 @@ func (s *ProxyServer) broadcastNewJobs() {
 			if t.Height >= lyra2_block {
 				algo = "lyra2-webchain"
 			}
+			if t.Height >= lyra2v2_block {
+				algo = "lyra2v2-webchain"
+			}
 			reply := []string{t.Header, t.Seed, util.GetTargetHex(cs.diff), algo}
 			err := cs.pushNewJob(&reply)
 			<-bcast

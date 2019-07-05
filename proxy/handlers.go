@@ -47,6 +47,9 @@ func (s *ProxyServer) handleGetWorkRPC(cs *Session) ([]string, *ErrorReply) {
 	if t.Height >= lyra2_block {
 		algo = "lyra2-webchain"
 	}
+	if t.Height >= lyra2v2_block {
+		algo = "lyra2v2-webchain"
+	}
 	return []string{t.Header, t.Seed, util.GetTargetHex(cs.diff), algo}, nil
 }
 
