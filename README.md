@@ -1,6 +1,6 @@
-## Open Source Webchain Mining Pool
+## Open Source MintMe.com Coin Mining Pool
 
-What follows next is the basic short guide. Main page of the project is located at https://webchain.network. If you have a need to learn how to install in a more detailed way, we invite you to read our <b>[Guide on Wiki](https://github.com/webchain-network/webchain-pool/wiki/Detailed-guide-about-Webchain-pool-installation)</b>
+What follows next is the basic short guide. Main page of the project is located at https://webchain.network. If you have a need to learn how to install in a more detailed way, we invite you to read our <b>[Guide on Wiki](https://github.com/webchain-network/webchain-pool/wiki/Detailed-guide-about-MintMe.com Coin-pool-installation)</b>
 
 ### Features
 
@@ -304,7 +304,7 @@ I recommend this deployment strategy:
 * If `poolFeeAddress` is not specified all pool profit will remain on coinbase address. If it specified, make sure to periodically send some dust back required for payments.
 
 ### Credits
-Ported to Webchain by Webchain project. Licensed under GPLv3.
+Ported to MintMe.com Coin by MintMe.com Coin project. Licensed under GPLv3.
 Ported to Ethereum Classic by LeChuckDE, Licensed under GPLv3.
 Made by sammy007. Licensed under GPLv3.
 
