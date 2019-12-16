@@ -211,8 +211,8 @@ func getEraUncleBlockReward(era *big.Int) *big.Int {
 // GetRewardByEra gets a block reward at disinflation rate.
 // Constants MaxBlockReward, DisinflationRateQuotient, and DisinflationRateDivisor assumed.
 func GetBlockWinnerRewardByEra(eraOrig *big.Int) *big.Int {
-	MaximumBlockReward := big.NewInt(5e+18) // 5 WEB
-	MaximumBlockReward.Mul(MaximumBlockReward, big.NewInt(10)) // 50 WEB
+	MaximumBlockReward := big.NewInt(5e+18) // 5 MINTME
+	MaximumBlockReward.Mul(MaximumBlockReward, big.NewInt(10)) // 50 MINTME
 
 	era := new(big.Int).Set(eraOrig)
 
