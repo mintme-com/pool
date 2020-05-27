@@ -1,6 +1,6 @@
-## Open Source Webchain Mining Pool
+## Open Source MintMe.com Coin Mining Pool
 
-What follows next is the basic short guide. Main page of the project is located at https://webchain.network. If you have a need to learn how to install in a more detailed way, we invite you to read our <b>[Guide on Wiki](https://github.com/webchain-network/webchain-pool/wiki/Detailed-guide-about-Webchain-pool-installation)</b>
+What follows next is the basic short guide. Main page of the project is located at https://mintme.com/coin. If you have a need to learn how to install in a more detailed way, we invite you to read our <b>[Guide on Wiki](https://github.com/webchain-network/webchain-pool/wiki/Detailed-guide-about-Webchain-pool-installation)</b>
 
 ### Features
 
