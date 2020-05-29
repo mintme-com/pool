@@ -115,6 +115,11 @@ span.logo-1 {
 	color: #1994b8;
 }
 
+.logo-1 img{
+	width: 200px;
+	margin: -3px -21px 0 0;
+}
+
 span.logo-2 {
 	font-weight: 300;
 	color: #FFF;
