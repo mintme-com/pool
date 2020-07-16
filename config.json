@@ -1,6 +1,6 @@
 {
 	"threads": 2,
-	"coin": "mintme",
+	"coin": "web",
 	"name": "main",
 
 	"proxy": {
