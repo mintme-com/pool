@@ -143,7 +143,7 @@ func (r *RPCClient) GetTxReceipt(hash string) (*TxReceipt, error) {
 }
 
 func (r *RPCClient) SubmitBlock(params []string) (bool, error) {
-	rpcResp, err := r.doPost(r.Url, "eth_submitWork", params[:2])
+	rpcResp, err := r.doPost(r.Url, "eth_submitWork", params[:3])
 	if err != nil {
 		return false, err
 	}
