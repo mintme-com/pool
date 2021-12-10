@@ -1,12 +1,12 @@
 ## Open Source MintMe.com Coin Mining Pool
 
-What follows next is the basic short guide. Main page of the project is located at https://mintme.com/coin. If you have a need to learn how to install in a more detailed way, we invite you to read our <b>[Guide on Wiki](https://github.com/webchain-network/webchain-pool/wiki/Detailed-guide-about-Webchain-pool-installation)</b>
+What follows next is the basic short guide. Main page of the project is located at https://mintme.com/coin. If you have a need to learn how to install in a more detailed way, we invite you to read our **[Guide on Wiki](https://github.com/mintme-com/pool/wiki/Detailed-guide-about-Webchain-pool-installation)**
 
 ### Features
 
 * Support for Stratum mining
 * Detailed block stats with luck percentage and full reward
-* Failover webchaind instances: webchaind high availability built in
+* Failover core-geth instances: core-geth high availability built in
 * Modern beautiful Ember.js frontend
 * Separate stats for workers: can highlight timed-out workers so miners can perform maintenance of rigs
 * JSON-API for stats
@@ -17,19 +17,17 @@ What follows next is the basic short guide. Main page of the project is located 
 Dependencies:
 
   * go >= 1.8
-  * webchaind
+  * core-geth
   * redis-server >= 2.8.0
   * nodejs
   * nginx
 
-**I highly recommend to use Ubuntu 16.04 LTS.**
-
-First install  [webchaind](https://github.com/webchain-network/webchaind/releases).
+First install  [core-geth](https://github.com/etclabscore/core-geth/releases). You need to run it with `--mintme` flag.
 
 Clone & compile:
 
-    git clone https://github.com/webchain-network/webchain-pool.git
-    cd webchain-pool
+    git clone https://github.com/mintme-com/pool.git
+    cd pool
     make
 
 Install redis-server.
@@ -134,7 +132,7 @@ otherwise you will get errors on start because of JSON comments.**
         "maxJump": 50
     },
 
-    // Try to get new job from webchaind in this interval
+    // Try to get new job from core-geth in this interval
     "blockRefreshInterval": "120ms",
     "stateUpdateInterval": "3s",
     // Require this share difficulty from miners
@@ -208,10 +206,10 @@ otherwise you will get errors on start because of JSON comments.**
     "purgeOnly": false
   },
 
-  // Check health of each webchaind node in this interval
+  // Check health of each core-geth node in this interval
   "upstreamCheckInterval": "5s",
 
-  /* List of webchaind nodes to poll for new jobs. Pool will try to get work from
+  /* List of core-geth nodes to poll for new jobs. Pool will try to get work from
     first alive one and check in background for failed to back up.
     Current block template of the pool is always cached in RAM indeed.
   */
@@ -254,9 +252,9 @@ otherwise you will get errors on start because of JSON comments.**
     "keepTxFees": false,
     // Run unlocker in this interval
     "interval": "10m",
-    // webchaind instance node rpc endpoint for unlocking blocks
+    // core-geth instance node rpc endpoint for unlocking blocks
     "daemon": "http://127.0.0.1:8545",
-    // Rise error if can't reach webchaind in this amount of time
+    // Rise error if can't reach core-geth in this amount of time
     "timeout": "10s"
   },
 
@@ -267,13 +265,13 @@ otherwise you will get errors on start because of JSON comments.**
     "requirePeers": 25,
     // Run payouts in this interval
     "interval": "12h",
-    // webchaind instance node rpc endpoint for payouts processing
+    // core-geth instance node rpc endpoint for payouts processing
     "daemon": "http://127.0.0.1:39573",
-    // Rise error if can't reach webchaind in this amount of time
+    // Rise error if can't reach core-geth in this amount of time
     "timeout": "10s",
     // Address with pool balance
     "address": "0x0",
-    // Let webchaind to determine gas and gasPrice
+    // Let core-geth to determine gas and gasPrice
     "autoGas": true,
     // Gas amount and price for payout tx (advanced users only)
     "gas": "21000",
@@ -304,8 +302,10 @@ I recommend this deployment strategy:
 * If `poolFeeAddress` is not specified all pool profit will remain on coinbase address. If it specified, make sure to periodically send some dust back required for payments.
 
 ### Credits
-Ported to Webchain by Webchain project. Licensed under GPLv3.
+Ported to MintMe Coin by MintMe project. Licensed under GPLv3.
+
 Ported to Ethereum Classic by LeChuckDE, Licensed under GPLv3.
+
 Made by sammy007. Licensed under GPLv3.
 
 #### Contributors
