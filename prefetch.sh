@@ -1,7 +1,7 @@
 #!/bin/bash
 
-git clone --depth=1 https://go.googlesource.com/sys /home/user/go/src/golang.org/x/sys
-git clone --depth=1 https://go.googlesource.com/crypto /home/user/go/src/golang.org/x/crypto
+git clone --depth=1 https://go.googlesource.com/sys "$HOME/go/src/golang.org/x/sys"
+git clone --depth=1 https://go.googlesource.com/crypto "$HOME/go/src/golang.org/x/crypto"
 
 URLLIST="
 gopkg.in/bsm/ratelimit.v1
@@ -24,5 +24,5 @@ github.com/yvasiyarov/newrelic_platform_go
 "
 
 for URL in $URLLIST; do
-	git clone --depth=1 "https://${URL}" "/home/user/go/src/${URL}"
+	git clone --depth=1 "https://${URL}" "$HOME/go/src/${URL}"
 done
