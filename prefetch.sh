@@ -24,5 +24,8 @@ github.com/yvasiyarov/newrelic_platform_go
 "
 
 for URL in $URLLIST; do
-	git clone --depth=1 "https://${URL}" "$HOME/go/src/${URL}"
+	while true; do # Retry until successful - some servers fail often
+		git clone --depth=1 "https://${URL}" "$HOME/go/src/${URL}" && break
+		echo "Retrying..."
+	done
 done
