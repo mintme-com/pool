@@ -110,6 +110,12 @@ code {
 	}
 }
 
+@media (min-width: 768px) and (max-width: 992px){
+	body { 
+		padding-top: 70px; 
+	}
+}
+
 span.logo-1 {
 	font-weight: 700;
 	color: #1994b8;
