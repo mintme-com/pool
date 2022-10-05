@@ -181,3 +181,6 @@ h4.note {
 .stats > div > span:first-of-type{
 	font-weight: bold;
 }
+.table-responsive {
+	margin-bottom: 2.5rem;
+}
