@@ -71,7 +71,7 @@
 	"upstream": [
 		{
 			"name": "main",
-			"url": "http://127.0.0.1:39573",
+			"url": "http://127.0.0.1:30303",
 			"timeout": "10s"
 		}
 	],
@@ -92,7 +92,7 @@
 		"immatureDepth": 16,
 		"keepTxFees": false,
 		"interval": "1m",
-		"daemon": "http://127.0.0.1:39573",
+		"daemon": "http://127.0.0.1:30303",
 		"timeout": "10s"
 	},
 
@@ -100,7 +100,7 @@
 		"enabled": true,
 		"requirePeers": 2,
 		"interval": "120m",
-		"daemon": "http://127.0.0.1:39573",
+		"daemon": "http://127.0.0.1:30303",
 		"timeout": "10s",
 		"address": "0x0",
 		"gas": "21000",
