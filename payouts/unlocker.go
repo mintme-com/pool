@@ -31,11 +31,9 @@ type UnlockerConfig struct {
 
 const minDepth = 16
 
-var (
-	big32                    = big.NewInt(32)
-	DisinflationRateQuotient = big.NewInt(249)
-	DisinflationRateDivisor  = big.NewInt(250)
-)
+var constReward, _ = new(big.Int).SetString("4000000000000000000", 10)
+var uncleReward = new(big.Int).Div(constReward, new(big.Int).SetInt64(32))
+
 
 const donationFee = 10.0
 const donationAccount = "0x2a42292799d49895a4c8d39411ae735e82987008"
